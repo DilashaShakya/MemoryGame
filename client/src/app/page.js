@@ -14,8 +14,24 @@ const Unclicked = () => {
     const [shake, setShake] = useState(null);
     const [timeLeft, setTimeLeft] = useState(30);
     const [gameOver, setGameOver] = useState(false);
+    const wrongSound = new Audio('/sounds/wrong.mp3');
+    const correctSound = new Audio('/sounds/correct.mp3');
+    const winSound = new Audio('sounds/win.mp3');
+    const loseSound = new Audio('sounds/lose.mp3')
 
-    // ⏳ Timer Logic
+
+    useEffect(() => {
+    if (wins === 6 && !gameOver) {
+        winSound.play();
+    }
+    else{
+        if (gameOver){
+            loseSound.play();
+        }
+    }
+    }, [wins, gameOver]);
+
+    // Timer Logic
     useEffect(() => {
         if (timeLeft > 0 && wins < 8) {
             const timeout = setTimeout(() => setTimeLeft(prevTime => prevTime - 1), 1000);
@@ -50,17 +66,41 @@ const Unclicked = () => {
                     ));
                     setWins(prevWins => prevWins + 1); // ✅ Fixes state update
                 }, 500);
+                correctSound.play();
             } else {
                 setTimeout(() => setRevealed(new Array(grids.length).fill(false)), 200);
+                wrongSound.play();
+
             }
             setSelectedEmoji([]);
         }
     }, [selectedEmoji]);
 
+    const shuffle = (array) => [...array].sort(() => Math.random() - 0.5);
+
+
+    const handleRestart=()=>{
+        const resetGrids = [
+        '😺','🐎', '🥤', '🦈' ,
+        '🦈', '🪲', '🍓', '😺',
+        '🥤', '🐎', '🪲', '🍓',
+        ];
+        setGrids(shuffle(resetGrids));
+
+        setRevealed(new Array(resetGrids.length).fill(false));
+        setSelectedEmoji([]);
+        setWins(0);
+        setShake(null);
+        setTimeLeft(30);
+        setGameOver(false);
+
+
+    };
+
     return (
         <div className='flex flex-col items-center justify-center mt-6 relative'>
 
-            {/* 🎉 Confetti Effect when user wins */}
+            {/* Confetti Effect when user wins */}
             {wins === 6 && <Confetti />}
 
             <h1 className="text-6xl font-extrabold text-green-900 text-center w-full mb-6 drop-shadow-md">
@@ -72,9 +112,12 @@ const Unclicked = () => {
             </h2>
 
             {gameOver ? (
+                <>
                 <h2 className="text-4xl font-bold text-red-600 mt-4">
                     {wins === 6 ? "🏆 Congratulations! You Won! 🏆" : "⏳ Game Over!"}
                 </h2>
+                <button onClick = {handleRestart} className='p-6 m-8 text-center items-center font-bold text-2xl border-2 rounded-3xl bg-red-200 text-gray-800 hover:bg-red-400'> Restart </button>
+                </>
             ) : (
                 <>
                     <h2 className='font-semibold text-3xl m-4'>Win count: {wins}/6</h2>
