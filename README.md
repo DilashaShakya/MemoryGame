@@ -28,13 +28,11 @@ Follow these steps to run the project locally:
    ```bash
    git clone https://github.com/your-username/memory-game.git
 
-2. **Navigate into the React app:**
-   cd client
 
-3. **Install dependencies**
+2. **Install dependencies**
      npm install
    
-5. **Start the development server:**
+3. **Start the development server:**
    npm run dev
 
 **Finally **: Open your browser and go to: http://localhost:3000
